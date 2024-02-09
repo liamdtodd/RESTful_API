@@ -1,0 +1,1454 @@
+{
+	"info": {
+		"_postman_id": "18d4be31-0ee2-42c2-aef7-b588b8d264a1",
+		"name": "toddl_project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30169363"
+	},
+	"item": [
+		{
+			"name": "get token Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"jwt_1\", pm.response.json()['id_token']);\r",
+							"\r",
+							"pm.sendRequest(\r",
+							"    {\r",
+							"        url: \"https://dev-bh72y76mar6dhzql.us.auth0.com/oauth/token\",\r",
+							"        method: \"POST\",\r",
+							"        header: {\r",
+							"            'Content-Type': 'application/json',\r",
+							"        },\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: JSON.stringify({\r",
+							"                \"grant_type\": \"password\",\r",
+							"                \"username\": \"anewone@example.com\",\r",
+							"                \"password\": \"somestufF1*\",\r",
+							"                \"client_id\": \"ItcirKGt2ogA5qnv9KOxXJHfrFuZM808\",\r",
+							"                \"client_secret\": \"FNR0I2pv0Yn5F1CVXC1-I5AfDZlcQLLnq7MB-snDresFBD8yEkMOQoN-TzbqpeNx\"\r",
+							"            })\r",
+							"        }\r",
+							"    },\r",
+							"    function (err, res) {\r",
+							"        if (err)\r",
+							"            console.log(err)\r",
+							"        else {\r",
+							"            pm.environment.set(\"jwt_2\", res.json()['id_token']);\r",
+							"        }\r",
+							"    }\r",
+							")"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"grant_type\": \"password\",\r\n    \"username\": \"teststuff@example.com\",\r\n    \"password\": \"somestufF1*\",\r\n    \"client_id\": \"ItcirKGt2ogA5qnv9KOxXJHfrFuZM808\",\r\n    \"client_secret\":\"FNR0I2pv0Yn5F1CVXC1-I5AfDZlcQLLnq7MB-snDresFBD8yEkMOQoN-TzbqpeNx\"\r\n}"
+				},
+				"url": {
+					"raw": "https://dev-bh72y76mar6dhzql.us.auth0.com/oauth/token",
+					"protocol": "https",
+					"host": [
+						"dev-bh72y76mar6dhzql",
+						"us",
+						"auth0",
+						"com"
+					],
+					"path": [
+						"oauth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "all users 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							"pm.environment.set('user_id1', pm.response.json()['users'][0].id);\r",
+							"pm.environment.set('user_id2', pm.response.json()['users'][1].id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/users",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "no JWT 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function() {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Day 5\",\r\n    \"group\": \"Cardio\"\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/workout",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create workout 201",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"workout_id\", pm.response.json()['id']);\r",
+							"\r",
+							"pm.test(\"201 status code\", function() {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Day 1\",\r\n    \"group\": \"Chest\"\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/workout",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create exercise 201",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"exercise_id\", pm.response.json()['id']);\r",
+							"\r",
+							"pm.test(\"201 status code\", function() {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Bicep Curls\",\r\n    \"sets\": 3,\r\n    \"reps\": 15\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/exercise",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"exercise"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bad accept 406",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"406 status code\", function() {\r",
+							"    pm.response.to.have.status(406);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "text/html",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{app_url}}/workout/{{workout_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout",
+						"{{workout_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "workout id 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{app_url}}/workout/{{workout_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout",
+						"{{workout_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update workout 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Day 2\",\r\n    \"group\": \"Back\"\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/workout/{{workout_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout",
+						"{{workout_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update exercise 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Incline Curls\",\r\n    \"sets\": 4,\r\n    \"reps\": 10\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/exercise/{{exercise_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"exercise",
+						"{{exercise_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "patch exercise 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"sets\": 4,\r\n    \"reps\": 5\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/exercise/{{exercise_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"exercise",
+						"{{exercise_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add exercise to workout 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{app_url}}/workout/{{workout_id}}/exercise/{{exercise_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout",
+						"{{workout_id}}",
+						"exercise",
+						"{{exercise_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "exercise id 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"workout_id !== null\", function() {\r",
+							"    pm.expect(pm.response.json()['workout_id']).to.eq(pm.environment.get(\"workout_id\"));\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{app_url}}/exercise/{{exercise_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"exercise",
+						"{{exercise_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove exercise 204",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"204 status code\", function() {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/exercise/{{exercise_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"exercise",
+						"{{exercise_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove workout 204",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"204 status code\", function() {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/workout/{{workout_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout",
+						"{{workout_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create workout 201 Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"workout_id\", pm.response.json()['id']);\r",
+							"\r",
+							"pm.test(\"201 status code\", function() {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Day 1\",\r\n    \"group\": \"Chest\"\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/workout",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create exercise 201 Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"exercise_id\", pm.response.json()['id']);\r",
+							"\r",
+							"pm.test(\"201 status code\", function() {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Bicep Curls\",\r\n    \"sets\": 3,\r\n    \"reps\": 15\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/exercise",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"exercise"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add exercise to workout 200 Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{app_url}}/workout/{{workout_id}}/exercise/{{exercise_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout",
+						"{{workout_id}}",
+						"exercise",
+						"{{exercise_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create exercise 201 Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"exercise_id\", pm.response.json()['id']);\r",
+							"\r",
+							"pm.test(\"201 status code\", function() {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Bicep Curls\",\r\n    \"sets\": 3,\r\n    \"reps\": 15\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/exercise",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"exercise"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all exercises 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/exercise",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"exercise"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add exercise to workout 200 Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{app_url}}/workout/{{workout_id}}/exercise/{{exercise_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout",
+						"{{workout_id}}",
+						"exercise",
+						"{{exercise_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add workout to user 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{app_url}}/users/{{user_id1}}/workout/{{workout_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"users",
+						"{{user_id1}}",
+						"workout",
+						"{{workout_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "all workouts 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/workout",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "workout w/ mult exercises 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"workout with 2 exercises\", function() {\r",
+							"    pm.expect(pm.response.json()['exercises'].length).to.eq(2);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{app_url}}/workout/{{workout_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout",
+						"{{workout_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove workout 204 Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"204 status code\", function() {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/workout/{{workout_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout",
+						"{{workout_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bad id 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"404 status code\", function() {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/workout/1",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bad request 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"400 status code\", function() {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Day 700\"\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/workout",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bad id 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"404 status code\", function() {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{app_url}}/workout/1",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bad content 415",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"415 status code\", function() {\r",
+							"    pm.response.to.have.status(415);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/html",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{app_url}}/workout",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bad URL 405",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"405 status code\", function() {\r",
+							"    pm.response.to.have.status(405);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Jolly Roger\"\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/exercise",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"exercise"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bad URL 405",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"405 status code\", function() {\r",
+							"    pm.response.to.have.status(405);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"exercises\": {\r\n        \"name\": \"Leg Press\",\r\n        \"sets\": 4,\r\n        \"reps\": 20\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/workout",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bad URL 405",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"405 status code\", function() {\r",
+							"    pm.response.to.have.status(405);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/workout",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"workout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{app_url}}/users/{{user_id1}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"users",
+						"{{user_id1}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
